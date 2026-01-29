@@ -1,0 +1,22 @@
+[package]
+name = "watch-rs"
+version = "0.1.0"
+edition = "2024"
+authors = ["watch-rs contributors"]
+description = "A cross-platform Rust implementation of the Unix watch command"
+license = "MIT"
+repository = "https://github.com/Raina-Hardik/watch-rs"
+readme = "README.md"
+keywords = ["watch", "cli", "terminal", "utility", "cross-platform"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+clap = { version = "4.5.55", features = ["derive", "env"] }
+crossterm = "0.29.0"
+chrono = "0.4.43"
+anyhow = "1.0.100"
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true
