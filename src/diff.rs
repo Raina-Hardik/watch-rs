@@ -22,7 +22,6 @@ pub struct DiffEngine {
     is_first_run: bool,
 }
 
-#[allow(dead_code)]
 impl DiffEngine {
     /// Create a new diff engine
     pub fn new() -> Self {
@@ -108,17 +107,6 @@ impl DiffEngine {
             changes
         }
     }
-
-    /// Check if this is the first run (no previous output to compare)
-    pub fn is_first(&self) -> bool {
-        self.is_first_run
-    }
-}
-
-/// Simple line-based diff for checking if output has changed
-#[allow(dead_code)]
-pub fn output_changed(current: &str, previous: &str) -> bool {
-    current != previous
 }
 
 #[cfg(test)]
@@ -165,11 +153,5 @@ mod tests {
         // Third run - change to CCC (should still show all changes from original)
         let changes2 = engine.calculate_diff("CCC", true);
         assert_eq!(changes2.len(), 3); // Still all 3 positions
-    }
-
-    #[test]
-    fn test_output_changed() {
-        assert!(output_changed("hello", "world"));
-        assert!(!output_changed("same", "same"));
     }
 }

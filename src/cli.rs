@@ -86,7 +86,6 @@ pub struct Args {
     pub command: Vec<String>,
 }
 
-#[allow(dead_code)]
 impl Args {
     /// Parse command-line arguments
     pub fn parse_args() -> Self {
@@ -99,21 +98,6 @@ impl Args {
         args.interval = args.interval.clamp(MIN_INTERVAL, MAX_INTERVAL);
 
         args
-    }
-
-    /// Check if permanent difference mode is enabled
-    pub fn is_permanent_diff(&self) -> bool {
-        matches!(&self.differences, Some(mode) if mode == "permanent" || mode == "1")
-    }
-
-    /// Check if any difference highlighting is enabled
-    pub fn has_differences(&self) -> bool {
-        self.differences.is_some()
-    }
-
-    /// Get the command as a single string for shell execution
-    pub fn command_string(&self) -> String {
-        self.command.join(" ")
     }
 }
 

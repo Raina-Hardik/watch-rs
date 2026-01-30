@@ -11,8 +11,6 @@ use crate::runner::{Runner, strip_non_printable};
 
 /// Exit status codes
 pub const EXIT_SUCCESS: i32 = 0;
-#[allow(dead_code)]
-pub const EXIT_ERROR: i32 = 1;
 pub const EXIT_COMMAND_ERROR: i32 = 2;
 
 /// State for the watch loop

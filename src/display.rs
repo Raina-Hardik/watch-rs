@@ -33,7 +33,6 @@ pub struct Display {
     screen_buffer: Vec<String>,
 }
 
-#[allow(dead_code)]
 impl Display {
     /// Create a new display manager
     pub fn new() -> Result<Self> {
@@ -77,11 +76,6 @@ impl Display {
         self.width = new_width;
         self.height = new_height;
         Ok(changed)
-    }
-
-    /// Get terminal dimensions
-    pub fn size(&self) -> (u16, u16) {
-        (self.width, self.height)
     }
 
     /// Clear the screen
