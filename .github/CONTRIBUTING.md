@@ -166,6 +166,59 @@ cargo run -- -g "cat somefile"
 - Prefer `impl Trait` for return types where appropriate
 - Use `?` operator for error propagation
 
+## Pull Request Guidelines
+
+### Before Submitting a PR
+
+1. **Fork and branch** - Create a feature branch from `main`
+2. **Single responsibility** - Each PR should address one feature or fix
+3. **Test locally** - Run the full checklist before pushing:
+   ```bash
+   cargo fmt
+   cargo clippy
+   cargo test
+   cargo build --release
+   ```
+4. **Update docs** - If adding a feature, update README.md with examples
+5. **Write a clear PR description** - Explain what, why, and how
+
+### PR Description Template
+
+```markdown
+## Description
+Brief explanation of the change.
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Documentation update
+
+## Testing
+How did you test this? Include platform(s) tested on.
+
+## Checklist
+- [ ] Code follows style guidelines
+- [ ] Tests added/updated
+- [ ] Documentation updated
+- [ ] Tested on multiple platforms (if applicable)
+```
+
+### Review Process
+
+- PRs will be reviewed for:
+  - Code quality and Rust idioms
+  - Platform compatibility (Windows/Linux/macOS)
+  - Test coverage
+  - Documentation accuracy
+- Authors should respond to feedback within a reasonable timeframe
+- PRs may be merged once approved and CI passes
+
+### Commit History
+
+- Squash related commits into logical units
+- Ensure commit messages follow Conventional Commits format
+- Rebasing onto main before merge is preferred
+
 ## Resources
 
 - [watch(1) man page](https://man7.org/linux/man-pages/man1/watch.1.html)
