@@ -144,3 +144,45 @@ version:
 [windows]
 version:
     cargo run -- --version
+
+# Publish new version (usage: just publish 0.2.0)
+publish version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    
+    # Validate version format
+    if ! [[ "{{version}}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "Error: Invalid version format. Use: just publish X.Y.Z"
+        exit 1
+    fi
+    
+    CURRENT_VERSION=$(grep "^version" Cargo.toml | head -1 | sed 's/.*"\([^"]*\)".*/\1/')
+    echo "Current version: $CURRENT_VERSION"
+    echo "Publishing as: {{version}}"
+    
+    # Update Cargo.toml
+    sed -i "s/^version = .*/version = \"{{version}}\"/" Cargo.toml
+    echo "✓ Updated Cargo.toml"
+    
+    # Update CHANGELOG.md with release date
+    RELEASE_DATE=$(date +%Y-%m-%d)
+    sed -i "s/## \[Unreleased\]/## [{{version}}] - $RELEASE_DATE\n\n## [Unreleased]/" CHANGELOG.md
+    echo "✓ Updated CHANGELOG.md"
+    
+    # Commit version bump
+    git add Cargo.toml CHANGELOG.md
+    git commit -m "chore(release): bump version to {{version}}"
+    echo "✓ Committed version bump"
+    
+    # Create annotated tag
+    git tag -a "v{{version}}" -m "Release version {{version}}"
+    echo "✓ Created git tag v{{version}}"
+    
+    # Push to origin
+    git push origin main
+    git push origin "v{{version}}"
+    echo "✓ Pushed to GitHub"
+    echo ""
+    echo "🎉 Version {{version}} published!"
+    echo "   GitHub Actions will now build cross-platform binaries"
+    echo "   View progress: https://github.com/Raina-Hardik/watch-rs/actions"
