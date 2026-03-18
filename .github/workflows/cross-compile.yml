@@ -1,0 +1,89 @@
+name: Cross-Compile & Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact: watch-rs
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            artifact: watch-rs
+          - os: ubuntu-latest
+            target: x86_64-pc-windows-gnu
+            artifact: watch-rs.exe
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact: watch-rs
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact: watch-rs
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact: watch-rs.exe
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Install cross-compile tools (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools mingw-w64 pkg-config
+
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Create artifact directory
+        run: mkdir -p artifacts
+
+      - name: Copy artifact
+        shell: bash
+        run: |
+          cp target/${{ matrix.target }}/release/${{ matrix.artifact }} artifacts/
+          ls -lh artifacts/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}
+          path: artifacts/${{ matrix.artifact }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: List artifacts
+        run: find artifacts -type f -exec ls -lh {} \;
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: artifacts/*/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
