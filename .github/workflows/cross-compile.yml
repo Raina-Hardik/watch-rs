@@ -8,54 +8,51 @@ on:
 jobs:
   build:
     name: Build ${{ matrix.target }}
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
+
     strategy:
       matrix:
-        include:
-          - os: ubuntu-latest
-            target: x86_64-unknown-linux-musl
-            artifact: watch-rs
-          - os: ubuntu-latest
-            target: x86_64-pc-windows-gnu
-            artifact: watch-rs.exe
-          - os: macos-latest
-            target: x86_64-apple-darwin
-            artifact: watch-rs
-          - os: macos-latest
-            target: aarch64-apple-darwin
-            artifact: watch-rs
+        target:
+          - x86_64-unknown-linux-musl
+          - x86_64-pc-windows-gnu
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.target }}
 
-      - name: Install cross-compile tools (Linux)
-        if: runner.os == 'Linux'
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-${{ matrix.target }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install cross
+        run: cargo install cross
+
+      - name: Warm up Docker
         run: |
-          sudo apt-get update
-          sudo apt-get install -y musl-tools mingw-w64 pkg-config
+          docker version
+          docker info
 
       - name: Build
-        run: cargo build --release --target ${{ matrix.target }}
+        run: cross build --release --target ${{ matrix.target }}
 
-      - name: Create artifact directory
-        run: mkdir -p artifacts
-
-      - name: Copy artifact
-        shell: bash
+      - name: Prepare artifact
         run: |
-          cp target/${{ matrix.target }}/release/${{ matrix.artifact }} artifacts/
-          ls -lh artifacts/
+          mkdir -p artifacts
+          BIN=watch-rs
+          [[ "${{ matrix.target }}" == *windows* ]] && BIN=watch-rs.exe
+          cp target/${{ matrix.target }}/release/$BIN artifacts/
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.target }}
-          path: artifacts/${{ matrix.artifact }}
+          path: artifacts/*
 
   release:
     needs: build
@@ -64,12 +61,9 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
         with:
-          path: ./artifacts
+          path: artifacts
 
       - name: List artifacts
         run: find artifacts -type f -exec ls -lh {} \;
