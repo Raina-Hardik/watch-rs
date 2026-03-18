@@ -13,9 +13,6 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            artifact: watch-rs
-          - os: ubuntu-latest
             target: x86_64-unknown-linux-musl
             artifact: watch-rs
           - os: ubuntu-latest
@@ -27,9 +24,6 @@ jobs:
           - os: macos-latest
             target: aarch64-apple-darwin
             artifact: watch-rs
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
-            artifact: watch-rs.exe
 
     steps:
       - uses: actions/checkout@v4
