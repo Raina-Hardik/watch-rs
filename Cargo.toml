@@ -11,10 +11,10 @@ keywords = ["watch", "cli", "terminal", "utility", "cross-platform"]
 categories = ["command-line-utilities"]
 
 [dependencies]
-clap = { version = "4.5.55", features = ["derive", "env"] }
+clap = { version = "4.6.0", features = ["derive", "env"] }
 crossterm = "0.29.0"
-chrono = "0.4.43"
-anyhow = "1.0.100"
+chrono = "0.4.44"
+anyhow = "1.0.102"
 
 [profile.release]
 opt-level = 3
