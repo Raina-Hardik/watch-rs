@@ -1,6 +1,6 @@
 [package]
 name = "watch-rs"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2024"
 authors = ["watch-rs contributors"]
 description = "A cross-platform Rust implementation of the Unix watch command"
