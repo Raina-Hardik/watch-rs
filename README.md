@@ -24,7 +24,24 @@ A cross-platform Rust implementation of the Unix `watch` command. Execute a prog
 
 ## Installation
 
-### From Source
+### From GitHub Releases (Recommended)
+
+Pre-built binaries are available for:
+- **Linux:** x86_64 (musl)
+- **macOS:** x86_64 and ARM64 (Apple Silicon)
+- **Windows:** x86_64 (GNU)
+
+Download the latest release from [GitHub Releases](https://github.com/Raina-Hardik/watch-rs/releases).
+
+### From Source with Cargo
+
+If you have Rust installed:
+
+```bash
+cargo install --git https://github.com/Raina-Hardik/watch-rs.git
+```
+
+Or build locally:
 
 ```bash
 git clone https://github.com/Raina-Hardik/watch-rs.git
@@ -34,7 +51,9 @@ cargo build --release
 
 The binary will be available at `target/release/watch-rs` (or `watch-rs.exe` on Windows).
 
-### From Cargo
+### From Cargo (crates.io)
+
+Coming soon! Once published to crates.io:
 
 ```bash
 cargo install watch-rs
@@ -44,6 +63,31 @@ cargo install watch-rs
 
 ```bash
 watch-rs [OPTIONS] <COMMAND>...
+```
+
+### GNU watch Compatibility
+
+`watch-rs` aims to be a best-effort stand-in for the Unix `watch` command, built with Windows in mind. It strives to match the behavior of the original:
+
+- Same default interval (2s)
+- Same flags (`-n`, `-d`, `-t`, etc.)
+- Same fullscreen output behavior
+
+**Note:** Some edge cases may not be fully covered. If you encounter differences or issues, please [open an issue](https://github.com/Raina-Hardik/watch-rs/issues) or submit a [pull request](https://github.com/Raina-Hardik/watch-rs/pulls). That's what they're here for!
+
+### Windows Users: Create an Alias
+
+To use `watch-rs` as a drop-in replacement for `watch`, add this to your PowerShell profile:
+
+```powershell
+Set-Alias -Name watch -Value watch-rs
+```
+
+Then you can use `watch` just like you would on Unix:
+
+```powershell
+watch dir
+watch -n 1 "Get-Process | Select-Object Name, CPU"
 ```
 
 ### Options
