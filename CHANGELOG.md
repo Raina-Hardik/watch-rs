@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-04-09
+
+### Changed
+- Optimized release profile for maximum speed and minimal binary size:
+  - Enabled fat LTO for aggressive inter-procedural optimization
+  - Set codegen-units = 1 for optimal code generation
+  - Enabled panic = "abort" to reduce DWARF unwinding overhead
+  - Strip all symbols for minimal artifact size (~729KB)
+
 ## [1.0.0] - 2026-04-09
 
 ### Added

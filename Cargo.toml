@@ -1,6 +1,6 @@
 [package]
 name = "watch-rs"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 authors = ["watch-rs contributors"]
 description = "A cross-platform Rust implementation of the Unix watch command"
@@ -18,5 +18,8 @@ anyhow = "1.0.102"
 
 [profile.release]
 opt-level = 3
-lto = true
+lto = "fat"
+codegen-units = 1
 strip = true
+panic = "abort"
+# Aggressively optimize for both speed and size
