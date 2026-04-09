@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-04-09
+
+### Added
+- Command execution mode selection:
+  - Auto mode (default) chooses direct execution for simple commands and shell execution for shell-like syntax
+  - `--shell` to force shell execution
+  - `--exec` to force direct (shell-independent) execution
+- Additional tests for execution mode behavior, display truncation, and exit-code normalization
+
+### Changed
+- Improved shell command handling to avoid naive argument joining
+- Improved environment behavior consistency by inheriting process environment in all modes
+- Header truncation is now Unicode-safe
+- Screen line redraw now clears stale characters to avoid display artifacts
+- Exit code mapping now avoids lossy wraparound behavior
+
+### CI/CD
+- Release workflow remains intentionally minimal and produces only:
+  - `watch-rs` for `x86_64-unknown-linux-musl`
+  - `watch-rs.exe` for `x86_64-pc-windows-gnu`
+
 ## [0.2.0] - 2026-03-18
 
 ### Added
