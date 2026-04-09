@@ -5,6 +5,17 @@ use std::time::Duration;
 
 use crate::cli::Args;
 
+/// Command execution mode
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CommandMode {
+    /// Decide automatically between direct exec and shell execution
+    Auto,
+    /// Always execute via a shell
+    Shell,
+    /// Always execute directly without a shell
+    Exec,
+}
+
 /// Difference highlighting mode
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum DiffMode {
@@ -38,7 +49,7 @@ pub struct Config {
     /// Whether to use precise timing
     pub precise: bool,
     /// Whether to use exec instead of shell
-    pub exec: bool,
+    pub command_mode: CommandMode,
     /// Whether to wrap long lines
     pub wrap: bool,
     /// Whether to rerun on terminal resize
@@ -62,6 +73,13 @@ impl Config {
 
         // Determine color mode: --color wins, --no-color disables, default is auto
         let color = if args.no_color { false } else { args.color };
+        let command_mode = if args.exec {
+            CommandMode::Exec
+        } else if args.shell {
+            CommandMode::Shell
+        } else {
+            CommandMode::Auto
+        };
 
         Config {
             interval: Duration::from_secs_f64(args.interval),
@@ -73,7 +91,7 @@ impl Config {
             chgexit: args.chgexit,
             equexit: args.equexit,
             precise: args.precise,
-            exec: args.exec,
+            command_mode,
             wrap: !args.no_wrap,
             rerun_on_resize: !args.no_rerun,
             follow: args.follow,
@@ -100,7 +118,7 @@ impl Default for Config {
             chgexit: false,
             equexit: None,
             precise: false,
-            exec: false,
+            command_mode: CommandMode::Auto,
             wrap: true,
             rerun_on_resize: true,
             follow: false,

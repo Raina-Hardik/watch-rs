@@ -110,11 +110,7 @@ impl Display {
 
         // Truncate if too long
         let max_left_width = self.width.saturating_sub(time_str.len() as u16 + 2) as usize;
-        let header_left = if header_left.len() > max_left_width {
-            format!("{}...", &header_left[..max_left_width.saturating_sub(3)])
-        } else {
-            header_left
-        };
+        let header_left = truncate_with_ellipsis(&header_left, max_left_width);
 
         // Calculate padding to right-align the time
         let padding = self.width as usize - header_left.len() - time_str.len();
@@ -163,6 +159,7 @@ impl Display {
 
         for (line_idx, line) in lines.iter().take(available_height).enumerate() {
             stdout.queue(MoveTo(0, start_line + line_idx as u16))?;
+            stdout.queue(Clear(ClearType::CurrentLine))?;
 
             let display_line = if config.wrap {
                 line.to_string()
@@ -274,6 +271,19 @@ impl Display {
     }
 }
 
+fn truncate_with_ellipsis(input: &str, max_width: usize) -> String {
+    if input.chars().count() <= max_width {
+        return input.to_string();
+    }
+
+    if max_width <= 3 {
+        return ".".repeat(max_width);
+    }
+
+    let kept: String = input.chars().take(max_width - 3).collect();
+    format!("{}...", kept)
+}
+
 impl Drop for Display {
     fn drop(&mut self) {
         let _ = self.cleanup();
@@ -341,4 +351,24 @@ pub fn wait_for_key() -> Result<()> {
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::truncate_with_ellipsis;
+
+    #[test]
+    fn test_truncate_with_ellipsis_ascii() {
+        assert_eq!(truncate_with_ellipsis("abcdef", 5), "ab...");
+    }
+
+    #[test]
+    fn test_truncate_with_ellipsis_unicode() {
+        assert_eq!(truncate_with_ellipsis("hi🙂there", 6), "hi🙂...");
+    }
+
+    #[test]
+    fn test_truncate_with_tiny_width() {
+        assert_eq!(truncate_with_ellipsis("abcdef", 2), "..");
+    }
 }

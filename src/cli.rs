@@ -61,9 +61,13 @@ pub struct Args {
     #[arg(short = 'p', long = "precise")]
     pub precise: bool,
 
-    /// Pass command to exec instead of shell
-    #[arg(short = 'x', long = "exec")]
+    /// Always execute command directly without a shell
+    #[arg(short = 'x', long = "exec", conflicts_with = "shell")]
     pub exec: bool,
+
+    /// Always run command through a shell
+    #[arg(long = "shell", conflicts_with = "exec")]
+    pub shell: bool,
 
     /// Turn off line wrapping (truncate long lines)
     #[arg(short = 'w', long = "no-wrap")]
@@ -120,6 +124,7 @@ mod tests {
             equexit: None,
             precise: false,
             exec: false,
+            shell: false,
             no_wrap: false,
             no_rerun: false,
             follow: false,

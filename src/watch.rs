@@ -46,7 +46,7 @@ impl WatchState {
 pub fn run(config: Config) -> Result<i32> {
     let mut display = Display::new()?;
     let mut diff_engine = DiffEngine::new();
-    let runner = Runner::new(config.exec);
+    let runner = Runner::new(config.command_mode);
     let mut state = WatchState::new();
 
     // Initialize display
