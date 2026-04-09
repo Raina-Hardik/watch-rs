@@ -13,6 +13,7 @@ default:
 format:
     cargo fmt --all
 
+# Format code (Rust standard formatting)
 [windows]
 format:
     cargo fmt --all
@@ -22,6 +23,7 @@ format:
 lint:
     cargo clippy --all-targets --all-features -- -D warnings
 
+# Lint code with clippy and apply fixes where possible
 [windows]
 lint:
     cargo clippy --all-targets --all-features -- -D warnings
@@ -31,6 +33,7 @@ lint:
 lint-fix:
     cargo clippy --all-targets --all-features --fix --allow-dirty --allow-staged
 
+# Lint with automatic fixes
 [windows]
 lint-fix:
     cargo clippy --all-targets --all-features --fix --allow-dirty --allow-staged
@@ -43,6 +46,7 @@ compile:
     cargo build --release
     @echo "Binary available at: target/release/watch-rs"
 
+# Compile release binary
 [windows]
 compile:
     Write-Host "Setting up Rust toolchain..."
@@ -56,6 +60,7 @@ compile-debug:
     cargo build --all-features
     @echo "Debug binary available at: target/debug/watch-rs"
 
+# Compile with all features and debug info
 [windows]
 compile-debug:
     cargo build --all-features
@@ -66,6 +71,7 @@ compile-debug:
 test:
     cargo test --all-features --verbose
 
+# Run tests
 [windows]
 test:
     cargo test --all-features --verbose
@@ -76,6 +82,7 @@ clean:
     cargo clean
     @echo "Build artifacts cleaned"
 
+# Clean build artifacts
 [windows]
 clean:
     cargo clean
@@ -86,6 +93,7 @@ clean:
 dev: format lint-fix compile test
     @echo "✓ Development workflow complete"
 
+# Full development workflow (format, lint-fix, compile, test)
 [windows]
 dev: format lint-fix compile test
     Write-Host "✓ Development workflow complete"
@@ -97,6 +105,7 @@ check:
     cargo clippy --all-targets --all-features -- -D warnings
     cargo test --all-features
 
+# Check everything without modifying (format, lint, compile, test)
 [windows]
 check:
     cargo fmt --all -- --check
@@ -110,6 +119,7 @@ release:
     @echo "Release binary: target/release/watch-rs"
     @echo "Size: $(du -h target/release/watch-rs | cut -f1)"
 
+# Build release binary for current platform
 [windows]
 release:
     cargo build --release --all-features
@@ -130,6 +140,7 @@ install:
     @echo "watch-rs installed locally"
     @echo "Try: watch-rs --version"
 
+# Install locally for testing
 [windows]
 install:
     cargo install --path .
@@ -141,11 +152,12 @@ install:
 version:
     @cargo run -- --version
 
+# Show version
 [windows]
 version:
     cargo run -- --version
 
-# Publish new version (usage: just publish 0.2.0)
+# Publish new version (usage: just publish 0.2.0) <- TODO: Fix this to work on Windows with PowerShell
 publish version:
     #!/usr/bin/env bash
     set -euo pipefail
