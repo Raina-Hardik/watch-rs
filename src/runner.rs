@@ -1,6 +1,7 @@
 //! Command execution for watch-rs
 
 use anyhow::{Context, Result};
+use std::borrow::Cow;
 use std::process::{Command, Output, Stdio};
 
 use crate::config::CommandMode;
@@ -20,13 +21,17 @@ pub struct CommandResult {
 
 impl CommandResult {
     /// Get the combined output (stdout + stderr)
-    pub fn combined_output(&self) -> String {
+    pub fn combined_output(&self) -> Cow<'_, str> {
         if self.stderr.is_empty() {
-            self.stdout.clone()
+            Cow::Borrowed(&self.stdout)
         } else if self.stdout.is_empty() {
-            self.stderr.clone()
+            Cow::Borrowed(&self.stderr)
         } else {
-            format!("{}\n{}", self.stdout, self.stderr)
+            let mut combined = String::with_capacity(self.stdout.len() + 1 + self.stderr.len());
+            combined.push_str(&self.stdout);
+            combined.push('\n');
+            combined.push_str(&self.stderr);
+            Cow::Owned(combined)
         }
     }
 }
@@ -295,6 +300,45 @@ mod tests {
         let input = "Hello \x1b[31mRed\x1b[0m World";
         let result = strip_non_printable(input, true);
         assert_eq!(result, "Hello \x1b[31mRed\x1b[0m World");
+    }
+
+    #[test]
+    fn test_combined_output_borrows_stdout_when_stderr_empty() {
+        let result = CommandResult {
+            stdout: "out".to_string(),
+            stderr: String::new(),
+            exit_code: Some(0),
+            success: true,
+        };
+
+        assert!(matches!(result.combined_output(), Cow::Borrowed("out")));
+    }
+
+    #[test]
+    fn test_combined_output_borrows_stderr_when_stdout_empty() {
+        let result = CommandResult {
+            stdout: String::new(),
+            stderr: "err".to_string(),
+            exit_code: Some(1),
+            success: false,
+        };
+
+        assert!(matches!(result.combined_output(), Cow::Borrowed("err")));
+    }
+
+    #[test]
+    fn test_combined_output_allocates_when_both_present() {
+        let result = CommandResult {
+            stdout: "out".to_string(),
+            stderr: "err".to_string(),
+            exit_code: Some(1),
+            success: false,
+        };
+
+        assert!(matches!(
+            result.combined_output(),
+            Cow::Owned(ref s) if s == "out\nerr"
+        ));
     }
 
     #[test]

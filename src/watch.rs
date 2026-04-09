@@ -123,7 +123,7 @@ fn watch_loop(
 
             // Process output
             let output = result.combined_output();
-            let processed_output = strip_non_printable(&output, config.color);
+            let processed_output = strip_non_printable(output.as_ref(), config.color);
 
             // Calculate differences if needed
             let changes = if config.diff_mode != DiffMode::None {
