@@ -28,8 +28,9 @@ A cross-platform Rust implementation of the Unix `watch` command. Execute a prog
 
 Pre-built binaries are available for:
 - **Linux:** x86_64 (musl)
-- **macOS:** x86_64 and ARM64 (Apple Silicon)
 - **Windows:** x86_64 (GNU)
+
+Note: Release assets are intentionally minimal. Other platforms can build from source.
 
 Download the latest release from [GitHub Releases](https://github.com/Raina-Hardik/watch-rs/releases).
 
@@ -73,6 +74,12 @@ watch-rs [OPTIONS] <COMMAND>...
 - Same flags (`-n`, `-d`, `-t`, etc.)
 - Same fullscreen output behavior
 
+Command execution mode is best-effort and cross-platform:
+
+- Auto mode (default): execute directly for simple commands, use shell when shell syntax is detected
+- `--shell`: always execute through shell (`$SHELL -c` on Unix, `%COMSPEC% /C` on Windows)
+- `-x, --exec`: always execute directly (shell-independent, predictable argument handling)
+
 **Note:** Some edge cases may not be fully covered. If you encounter differences or issues, please [open an issue](https://github.com/Raina-Hardik/watch-rs/issues) or submit a [pull request](https://github.com/Raina-Hardik/watch-rs/pulls). That's what they're here for!
 
 ### Windows Users: Create an Alias
@@ -104,7 +111,8 @@ watch -n 1 "Get-Process | Select-Object Name, CPU"
 | `-g, --chgexit` | Exit when output changes |
 | `-q, --equexit <CYCLES>` | Exit when output is unchanged for N cycles |
 | `-p, --precise` | Precise timing mode |
-| `-x, --exec` | Pass command to exec instead of shell |
+| `-x, --exec` | Always execute directly (without shell) |
+| `--shell` | Always execute through shell |
 | `-w, --no-wrap` | Disable line wrapping |
 | `-r, --no-rerun` | Don't rerun on terminal resize |
 | `-f, --follow` | Scroll output like tail -f |
@@ -163,17 +171,12 @@ watch-rs -g cat /etc/passwd
 
 ### Windows
 ```bash
-cargo build --release --target x86_64-pc-windows-msvc
+cargo build --release --target x86_64-pc-windows-gnu
 ```
 
 ### Linux
 ```bash
-cargo build --release --target x86_64-unknown-linux-gnu
-```
-
-### macOS
-```bash
-cargo build --release --target x86_64-apple-darwin
+cargo build --release --target x86_64-unknown-linux-musl
 ```
 
 ## Contributing
